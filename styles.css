@@ -1,0 +1,85 @@
+
+
+.winnerSize {
+	font-size: 36px;
+	font-family: 'Bowlby One', cursive;
+	padding: 0px 10px;
+	padding-top: 10px;
+	text-align: right;
+	text-transform: uppercase;
+	color: black;
+
+}
+
+.winnerName {
+	font-size: 50px;
+	font-family: 'Luckiest Guy', cursive;
+	padding: -10px 50px;
+	text-align: left;
+	text-transform: uppercase;
+	color: black;
+}
+
+.fontType {
+	font-family: 'Racing Sans One', cursive;
+	color: white;
+}
+
+.titleSize {
+	font-size: 50px;
+	font-family: 'Nosifer', cursive;
+	padding: 10px 50px;
+	text-align: center;
+	text-transform: uppercase;
+	color: #e63d00;
+}
+
+.textAlign {
+	text-align: center;
+}
+
+#titleBorder {
+	border: 5px double black;
+}
+
+.border {
+	border: 1px solid black;
+}
+
+.topBuffer { 
+	padding-top: 10px;
+}
+
+.imageBuffer {
+	padding-top: 20px;
+}
+
+#imageSize {
+	width: 500px;
+	height: 200px;
+}
+
+body {
+    background-color: black;
+	padding-right: 0px;
+}
+
+.container {
+    background-color: white;
+	padding-left: -20px;
+}
+
+.rowColor {
+	background-color: #4d4d4d;
+}
+
+.titleRowColor {
+	background-color: black;
+}
+
+#diceImg {
+	width: 75px;
+	height: 90px;
+	margin-top: 10px;
+	margin-left: 280px;
+}
