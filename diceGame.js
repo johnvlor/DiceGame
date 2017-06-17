@@ -12,18 +12,18 @@ function rollDice(){
 	return diceRoll;
 }
 
-function attackDiceRoll () {
+function attackDiceRoll() {
     var diceRoll = Math.floor(Math.random() * 6) + 1;
 	return diceRoll;
 }
 
-function chanceDiceRoll () {
+function chanceDiceRoll() {
 	var diceRoll = Math.floor(Math.random() * 10) + 1;
 	return diceRoll;
 }
 
 //Each players turns to roll
-function playerTurnToRoll (playerName) {
+function playerTurnToRoll(playerName) {
 	var answer = confirm(playerName+" it's your turn.  Ready to roll?");
 	var playerRolls;
 	
@@ -38,7 +38,7 @@ function playerTurnToRoll (playerName) {
 }
 
 //Display the result of the dice rolls for each turn
-function displayDiceRollAlert (playerRolls) {
+function displayDiceRollAlert(playerRolls) {
 	
 	if ((playerRolls >= 1) && (playerRolls <=5)) {
 		alert("Ehh...that's a decent roll.  You rolled a "+playerRolls);
@@ -55,7 +55,7 @@ function displayDiceRollAlert (playerRolls) {
 }
 
 //Update the score counter
-function updateScore (playerLifePoints) {
+function updateScore(playerLifePoints) {
 	var score;
 	
 	if (playerLifePoints[1] > playerLifePoints[2]) {
@@ -85,17 +85,20 @@ function callChance () {
 }
 
 //Display the chance dice roll
-function displayChanceRollAlert (chanceRoll) {
+function displayChanceRollAlert(chanceRoll) {
 	if (chanceRoll >= 7) {
 		alert("NICE!! Your chance paid off. You rolled a "+chanceRoll+". \n\nAttacks Doubled");
 	}
-	else {
+	else if ((chanceRoll >=1) && (chanceRoll < 7)) {
 		alert("TOO BAD! You rolled a "+chanceRoll+". \n\nOpponet Gains Life");
+	}
+	else {
+		return;
 	}
 }
 
 //Display the attack dice roll
-function displayAttackRollAlert (attackRoll) {
+function displayAttackRollAlert(attackRoll) {
 	
 	alert("What's your attack?  Roll the attack dice.");
 	
@@ -120,9 +123,33 @@ function displayAttackRollAlert (attackRoll) {
 }
 
 //Determine and calculate the type of attack base of the attack dice roll	
-function determineAttack (guess,lifePoints,player) {
+function determineAttack(guess,lifePoints,player) {
 	var attack;
 	var chance = 0;
+	
+	attack = attackDiceRoll();
+	displayAttackRollAlert(attack);
+	
+	if (guess == attack) {
+		
+		chance = callChance();			
+		displayChanceRollAlert(chance);
+		
+		if (chance >= 7) {	
+			lifePoints = calculateChanceAttack(attack, player, lifePoints);
+		}
+		else if ((chance >=1) && (chance < 7)) {
+			lifePoints = calculateNonChanceAttack(attack, player, lifePoints);
+		}
+	}
+	else {
+		lifePoints = calculateRegularAttack(attack, player, lifePoints);
+	}
+	return lifePoints;
+}
+
+//Calculate regular attacks
+function calculateRegularAttack(attack, player, lifePoints) {
 	var block = 1;
 	var slap = 2;
 	var headbutt = 4;
@@ -130,71 +157,9 @@ function determineAttack (guess,lifePoints,player) {
 	var kick = 8;
 	var bodySlam = 10;
 	
-	attack = attackDiceRoll();
-	displayAttackRollAlert(attack);
-	
 	console.log("Attack Roll is ",attack);
 	
-	if (guess == attack) {
-		
-		chance = callChance();			
-		displayChanceRollAlert(chance);
-		
-		if (chance >= 7) {
-		
-			if (attack === 1) {
-				console.log("KAPOW! Attacks with Slap! ",player," Loses ",slap*2," life");
-				lifePoints = lifePoints - (slap*2);
-			}
-			else if (attack === 2) {
-				console.log("KAPOW! Attack with Headbutt! ",player," Loses ",headbutt*2," life");
-				lifePoints = lifePoints - (headbutt*2);
-			}
-			else if (attack === 3) {
-				console.log("KAPOW! Attack was Blocked! ",player," Loses ",block*2," life");
-				lifePoints = lifePoints - (block*2);
-			}
-			else if (attack === 4) {
-				console.log("KAPOW! Attacks with Punch! ",player," Loses ",punch*2," life");
-				lifePoints = lifePoints - (punch*2);
-			}
-			else if (attack === 5) {
-				console.log("KAPOW! Attacks with Kick! ",player," Loses ",kick*2," life");
-				lifePoints = lifePoints - (kick*2);
-			}
-			else if (attack === 6) {
-				console.log("KAPOW! Attacks with Body Slam! ",player," Loses ",bodySlam*2," life");
-				lifePoints = lifePoints - (bodySlam*2);
-			}
-		}
-		else if ((chance >=1) && (chance < 7)) {
-			if (attack === 1) {
-				console.log("You lose! Attacks with Slap! ",player," gains ",slap," life");
-				lifePoints = lifePoints + slap;
-			}
-			else if (attack === 2) {
-				console.log("You lose! Attack with Headbutt! ",player," gains ",headbutt," life");
-				lifePoints = lifePoints + headbutt;
-			}
-			else if (attack === 3) {
-				console.log("You lose! Attack was Blocked! ",player," gains ",block," life");
-				lifePoints = lifePoints + block;
-			}
-			else if (attack === 4) {
-				console.log("You lose! Attacks with Punch! ",player," gains ",punch," life");
-				lifePoints = lifePoints + punch;
-			}
-			else if (attack === 5) {
-				console.log("You lose! Attacks with Kick! ",player," gains ",kick," life");
-				lifePoints = lifePoints + kick;
-			}
-			else if (attack === 6) {
-				console.log("You lose! Attacks with Body Slam!  ",player," gains ",bodySlam," life");
-				lifePoints = lifePoints + bodySlam;
-			}
-		}
-	}
-	else if (attack === 1) {
+	if (attack === 1) {
 		console.log("Attacks with Slap! ",player,"Loses ",slap," life");
 		lifePoints = lifePoints - slap;
 	}
@@ -221,14 +186,90 @@ function determineAttack (guess,lifePoints,player) {
 	return lifePoints;
 }
 
+//Calculate a chance won attack
+function calculateChanceAttack(attack, player, lifePoints) {
+	var block = 1;
+	var slap = 2;
+	var headbutt = 4;
+	var punch = 6;
+	var kick = 8;
+	var bodySlam = 10;
+	
+	console.log("Attack Roll is ",attack);
+
+	if (attack === 1) {
+		console.log("Attacks Doubled! Attacks with Slap! ",player," Loses ",slap*2," life");
+		lifePoints = lifePoints - (slap*2);
+	}
+	else if (attack === 2) {
+		console.log("Attacks Doubled! Attack with Headbutt! ",player," Loses ",headbutt*2," life");
+		lifePoints = lifePoints - (headbutt*2);
+	}
+	else if (attack === 3) {
+		console.log("Attacks Doubled! Attack was Blocked! ",player," Loses ",block*2," life");
+		lifePoints = lifePoints - (block*2);
+	}
+	else if (attack === 4) {
+		console.log("Attacks Doubled! Attacks with Punch! ",player," Loses ",punch*2," life");
+		lifePoints = lifePoints - (punch*2);
+	}
+	else if (attack === 5) {
+		console.log("Attacks Doubled! Attacks with Kick! ",player," Loses ",kick*2," life");
+		lifePoints = lifePoints - (kick*2);
+	}
+	else if (attack === 6) {
+		console.log("Attacks Doubled! Attacks with Body Slam! ",player," Loses ",bodySlam*2," life");
+		lifePoints = lifePoints - (bodySlam*2);
+	}
+	return lifePoints;
+}
+
+//Calculate a chance lost attack
+function calculateNonChanceAttack(attack, player, lifePoints) {
+	var block = 1;
+	var slap = 2;
+	var headbutt = 4;
+	var punch = 6;
+	var kick = 8;
+	var bodySlam = 10;
+	
+	console.log("Attack Roll is ",attack);
+	
+	if (attack === 1) {
+		console.log("Chance lost! Attacks with Slap countered!",player," gains ",slap," life");
+		lifePoints = lifePoints + slap;
+	}
+	else if (attack === 2) {
+		console.log("Chance lost! Attack with Headbutt countered!",player," gains ",headbutt," life");
+		lifePoints = lifePoints + headbutt;
+	}
+	else if (attack === 3) {
+		console.log("Chance lost! Attack was Blocked countered!",player," gains ",block," life");
+		lifePoints = lifePoints + block;
+	}
+	else if (attack === 4) {
+		console.log("Chance lost! Attacks with Punch countered!",player," gains ",punch," life");
+		lifePoints = lifePoints + punch;
+	}
+	else if (attack === 5) {
+		console.log("Chance lost! Attacks with Kick countered!",player," gains ",kick," life");
+		lifePoints = lifePoints + kick;
+	}
+	else if (attack === 6) {
+		console.log("Chance lost! Attacks with Body Slam countered!",player," gains ",bodySlam," life");
+		lifePoints = lifePoints + bodySlam;
+	}
+	return lifePoints;
+}
+
 //Display what the player rolls
-function displayDiceRolls (player, playerDiceRoll) {
+function displayDiceRolls(player, playerDiceRoll) {
 	console.log(player[1]," rolls ", playerDiceRoll[1]);
 	console.log(player[2]," rolls ", playerDiceRoll[2]);
 }
 
 //Display the status of each player's life points
-function displayLifeTotal (player, playerLifePoints) {
+function displayLifeTotal(player, playerLifePoints) {
 	console.log("");
 	console.log("Life Points Status");
 	console.log(player[1],"'s Life = ",playerLifePoints[1]);
@@ -237,7 +278,7 @@ function displayLifeTotal (player, playerLifePoints) {
 }
 
 //Determine the result
-function gameResult (player,playerLifePoints) {
+function gameResult(player,playerLifePoints) {
 	var result = [];
 	
 	if (playerLifePoints[1] > playerLifePoints[2]) {
@@ -254,14 +295,14 @@ function gameResult (player,playerLifePoints) {
 }
 
 //Display the result of the winner
-function displayWinner (result) {
+function displayWinner(result) {
 	alert(result[3]+" is down for the count.\n\nGAME OVER");
 	alert(result[1]+" is the Winner with "+result[2]+" life points left.");
 	console.log(result[1]," is the Winner with ",result[2]," life points left.");	
 }
 
 //Compare each player's dice roll to determine who won
-function compareDiceRolls (playerDiceRoll, playerLifePoints, player) {
+function compareDiceRolls(playerDiceRoll, playerLifePoints, player) {
 	var guess;
 	
 		if (playerDiceRoll[1] === playerDiceRoll[2]) {
@@ -271,20 +312,20 @@ function compareDiceRolls (playerDiceRoll, playerLifePoints, player) {
 		else if (playerDiceRoll[1] > playerDiceRoll[2]) {
 			alert(player[1]+" wins the roll with "+playerDiceRoll[1]);
 			console.log(player[1]," wins the roll",playerDiceRoll[1]);
-			guess = prompt("Pick a between 1 and 6 for a chance to double your attacks.");
+			guess = prompt("Pick a number between 1 and 6 for a chance to double your attacks.");
 			playerLifePoints[2] = determineAttack(guess,playerLifePoints[2], player[2]);
 		}
 		else {
 			alert(player[2]+" wins the roll with "+playerDiceRoll[2]);
 			console.log(player[2]," wins the roll",playerDiceRoll[2]);
-			guess = prompt("Pick a between 1 and 6 for a chance to double your attacks.");
+			guess = prompt("Pick a number between 1 and 6 for a chance to double your attacks.");
 			playerLifePoints[1] = determineAttack(guess,playerLifePoints[1], player[1]);
 		}
 	return playerLifePoints;
 }
 
 //Display result to the html webpage
-function displayHTML (player, playerLifePoints, result) {
+function displayHTML(player, playerLifePoints, result) {
 	document.getElementById("playerOne").innerHTML = player[1];
 	document.getElementById("playerTwo").innerHTML = player[2];	
 	
@@ -295,7 +336,7 @@ function displayHTML (player, playerLifePoints, result) {
 }
 
 //Display intro message
-function displayIntro () {
+function displayIntro() {
 	console.log("Welcome Players.  Make sure you strecth.  Don't pull a muscle.");
 	console.log("")
 	console.log("Both players will start with 20 points.  First one to knock the other one to 0 life points WINS.");
@@ -304,7 +345,7 @@ function displayIntro () {
 }
 
 //Display player's name
-function displayPlayers (player) {
+function displayPlayers(player) {
 	console.log("Player One = ",player[1]);
 	console.log("Player Two = ",player[2]);
 	console.log("");
@@ -323,7 +364,7 @@ function convertNegativeToZero(playerLifePoints) {
 }
 
 //Main function to play the game	
-function playGame () {
+function playGame() {
 	var player = [];
 	var playerLifePoints = [];
 		playerLifePoints[1] = 20;
